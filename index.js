@@ -22,17 +22,14 @@ app
   .set("views", path.join(__dirname, "public/views"))
   .set("view engine", "pug")
   .get("/", (req, res) => res.render("index", { source: `@${source}` }))
-  .listen(port, () => console.log(`Listening on localhost:${port}`));
+  .listen(port, () => console.log(`Listening on port ${port}`));
 
 /* GET home page. */
 // router.get("/", function (req, res, next) {
 //   res.render("index", { title: "Geopolitica", source: "BBC World" });
 // });
 
-const DB = process.env.DATABASE.replace(
-  "<PASSWORD>",
-  process.env.DATABASE_PASSWORD
-);
+const DB = process.env.DATABASE;
 
 mongoose
   .connect(DB, {
