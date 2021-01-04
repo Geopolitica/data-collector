@@ -25,9 +25,9 @@ app
   .listen(port, () => console.log(`Listening on localhost:${port}`));
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
-  res.render("index", { title: "Geopolitica", source: "BBC World" });
-});
+// router.get("/", function (req, res, next) {
+//   res.render("index", { title: "Geopolitica", source: "BBC World" });
+// });
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
