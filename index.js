@@ -3,10 +3,31 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const Twit = require("twit");
 const cron = require("node-cron");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const createError = require("http-errors");
 
 const app = express();
 const port = process.env.PORT || 5000;
+const router = express.Router();
+
 dotenv.config({ path: "./config.env" });
+
+// Define Twitter handle of source here
+const source = "BBCWorld";
+
+app
+  .use(express.static(path.join(__dirname, "public")))
+  .set("views", path.join(__dirname, "public/views"))
+  .set("view engine", "pug")
+  .get("/", (req, res) => res.render("index", { source: `@${source}` }))
+  .listen(port, () => console.log(`Listening on localhost:${port}`));
+
+/* GET home page. */
+router.get("/", function (req, res, next) {
+  res.render("index", { title: "Geopolitica", source: "BBC World" });
+});
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
@@ -42,8 +63,6 @@ const tweetSchema = new mongoose.Schema({
 
 const Tweet = mongoose.model("Tweet", tweetSchema);
 
-const source = "BBCWorld";
-
 const params = {
   q: `from:${source} -is:retweet lang:en`,
   count: 10,
@@ -76,12 +95,12 @@ const getData = async (err, data, response) => {
   }
 };
 
-// Inital Request
-T.get("search/tweets", params, getData);
-console.log("🔎 Checking for tweets every 15 minutes \n");
+// // Inital Request
+// T.get("search/tweets", params, getData);
+// console.log("🔎 Checking for tweets every 15 minutes \n");
 
-// Subsequent requests
-cron.schedule("*/15 * * * *", function () {
-  T.get("search/tweets", params, getData);
-  console.log("🔎 Checking for tweets every 15 minutes \n");
-});
+// // Subsequent requests
+// cron.schedule("*/15 * * * *", function () {
+//   T.get("search/tweets", params, getData);
+//   console.log("🔎 Checking for tweets every 15 minutes \n");
+// });

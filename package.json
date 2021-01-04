@@ -8,15 +8,19 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.5",
     "country-in-text-detector": "^1.0.10",
     "dotenv": "^8.2.0",
     "express": "^4.16.4",
     "got": "^11.8.0",
+    "http-errors": "^1.8.0",
     "mongoose": "^5.11.6",
+    "morgan": "^1.10.0",
     "needle": "^2.5.2",
     "node-cron": "^2.0.3",
     "oauth-1.0a": "^2.2.6",
     "p5": "^1.1.9",
+    "pug": "^3.0.0",
     "twit": "^2.2.11"
   },
   "devDependencies": {
