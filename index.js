@@ -92,12 +92,12 @@ const getData = async (err, data, response) => {
   }
 };
 
-// // Inital Request
-// T.get("search/tweets", params, getData);
-// console.log("🔎 Checking for tweets every 15 minutes \n");
+// Inital Request
+T.get("search/tweets", params, getData);
+console.log("🔎 Checking for tweets every 15 minutes \n");
 
-// // Subsequent requests
-// cron.schedule("*/15 * * * *", function () {
-//   T.get("search/tweets", params, getData);
-//   console.log("🔎 Checking for tweets every 15 minutes \n");
-// });
+// Subsequent requests
+cron.schedule("*/15 * * * *", function () {
+  T.get("search/tweets", params, getData);
+  console.log("🔎 Checking for tweets every 15 minutes \n");
+});
