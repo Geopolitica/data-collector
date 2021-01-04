@@ -21,5 +21,20 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1"
-  }
+  },
+  "engines": {
+    "node": "v14.15.3"
+  },
+  "description": "Skeleton app to handle API requests for data collection.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Geopolitica/data-collector.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Geopolitica/data-collector/issues"
+  },
+  "homepage": "https://github.com/Geopolitica/data-collector#readme"
 }
