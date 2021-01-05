@@ -97,7 +97,7 @@ T.get("search/tweets", params, getData);
 console.log("🔎 Checking for tweets every 15 minutes \n");
 
 // Subsequent requests
-cron.schedule("*/15 * * * *", function () {
+cron.schedule("*/30 * * * *", function () {
   T.get("search/tweets", params, getData);
   console.log("🔎 Checking for tweets every 15 minutes \n");
 });
