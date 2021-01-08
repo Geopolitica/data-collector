@@ -4,9 +4,6 @@ const dotenv = require("dotenv");
 const Twit = require("twit");
 const cron = require("node-cron");
 const path = require("path");
-const cookieParser = require("cookie-parser");
-const logger = require("morgan");
-const createError = require("http-errors");
 const countryDetector = require("country-in-text-detector");
 
 const app = express();
@@ -26,9 +23,9 @@ app
   .listen(port, () => console.log(`Listening on port ${port}`));
 
 /* GET home page. */
-// router.get("/", function (req, res, next) {
-//   res.render("index", { title: "Geopolitica", source: "BBC World" });
-// });
+router.get("/", function (req, res, next) {
+  res.render("index", { title: "Geopolitica", source: "BBC World" });
+});
 
 const DB = process.env.DATABASE;
 
