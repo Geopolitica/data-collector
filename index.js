@@ -66,9 +66,18 @@ const params = {
   tweet_mode: "extended",
 };
 
+function findCountries(data) {
+  let countriesFound = countryDetector.detect(data);
+
+  for (let i = 0; i < countriesFound.length; i++) {
+    let countryName = countriesFound[i].name;
+    let numMatches = countriesFound[i].matches.length;
+    return { countryName, numMatches };
+  }
+}
+
 const getData = async (err, data, response) => {
   const tweetInfo = data.statuses;
-  //console.log(tweetInfo);
 
   for (let i = 0; i < tweetInfo.length; i++) {
     const filter = { vendor_id: tweetInfo[i].id };
@@ -80,6 +89,7 @@ const getData = async (err, data, response) => {
       retweet_count: tweetInfo[i].retweet_count,
       favourite_count: tweetInfo[i].favorite_count,
       last_updated_at: Date.now(),
+      country_mentions: findCountries(tweetInfo[i].full_text),
     };
     const opts = {
       new: true,
@@ -89,7 +99,7 @@ const getData = async (err, data, response) => {
     let doc = await Tweet.findOneAndUpdate(filter, update, opts).catch((e) => {
       console.log(e);
     });
-    console.log(doc.text);
+    console.log(doc);
   }
 };
 
@@ -102,62 +112,3 @@ cron.schedule("*/30 * * * *", function () {
   T.get("search/tweets", params, getData);
   console.log("🔎 Checking for tweets every 15 minutes \n");
 });
-
-const retrieveTweets = async function () {
-  try {
-    // Queries for tweets logged in the last 24 hours
-    const query = {
-      country_mentions: { $exists: false },
-    };
-    const result = await Tweet.find(query).sort({ _id: -1 }).lean(); //.limit(10)
-
-    return result;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-const addCountryMentions = async function (id, mentions) {
-  try {
-    // Locates tweet by ID and adds country mentions
-    const record = await Tweet.findByIdAndUpdate(
-      id,
-      { country_mentions: mentions },
-      function (err, result) {
-        if (err) {
-          console.log("😭");
-        } else {
-          console.log(`${id} 🌈`);
-        }
-      }
-    );
-    return record;
-  } catch (error) {
-    return error;
-  }
-};
-
-function findCountries(data) {
-  let countriesFound = countryDetector.detect(data);
-
-  for (let i = 0; i < countriesFound.length; i++) {
-    let countryName = countriesFound[i].name;
-    let numMatches = countriesFound[i].matches.length;
-    return { countryName, numMatches };
-  }
-}
-
-function failureCallback(error) {
-  console.log(error);
-}
-
-(async function () {
-  retrieveTweets()
-    .then(function (tweets) {
-      for (i = 0; i < tweets.length; i++) {
-        let mentions = findCountries(tweets[i].text);
-        addCountryMentions(tweets[i]._id, mentions);
-      }
-    })
-    .catch(failureCallback);
-})();
