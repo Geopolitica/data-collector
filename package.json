@@ -14,14 +14,17 @@
     "express": "^4.16.4",
     "got": "^11.8.0",
     "http-errors": "^1.8.0",
+    "mocha": "^8.2.1",
     "mongoose": "^5.11.6",
     "morgan": "^1.10.0",
+    "natural": "^2.4.4",
     "needle": "^2.5.2",
     "node-cron": "^2.0.3",
     "oauth-1.0a": "^2.2.6",
     "p5": "^1.1.9",
     "pug": "^3.0.0",
-    "twit": "^2.2.11"
+    "twit": "^2.2.11",
+    "wordpos": "^2.1.0"
   },
   "devDependencies": {
     "concurrently": "^4.0.1"
