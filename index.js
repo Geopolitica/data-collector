@@ -7,7 +7,8 @@ const path = require("path");
 const countryDetector = require("country-in-text-detector");
 const natural = require("natural");
 // const tokenizer = new natural.WordTokenizer();
-// const defaultStopwords = require("./stopwords.js").words;
+const notTopics = require("./stopwords.js").words;
+const demonyms = require("./demonyms.js").demonyms;
 var WordPOS = require("wordpos"),
   wordpos = new WordPOS();
 
@@ -66,6 +67,9 @@ const tweetSchema = new mongoose.Schema({
   last_updated_at: Date,
   country_mentions: Object,
   topics: Array,
+  hashtags: Array,
+  total_interactions: Number,
+  article_link: String,
 });
 
 const Tweet = mongoose.model("Tweet", tweetSchema);
@@ -77,12 +81,31 @@ const params = {
   count: 10,
   tweet_mode: "extended",
 };
+// Define Regex
+
+const hyperlinkRegex = /(?:https?|ftp):\/\/[\n\S]+/g;
+const hashtagRegex = /(^|\s)(#[a-z\d-]+)/gi;
 
 // Functions
-
-const removeLink = function (str) {
-  let cleanedString = str.replace(/(?:https?|ftp):\/\/[\n\S]+/g, "").trim();
+// TODO: Further refactor extraction functions
+const removeLink = function (str, regex) {
+  let cleanedString = str.replace(regex, "").trim();
   return cleanedString;
+};
+
+const extractLink = function (str, regex) {
+  let link = str.match(regex, "");
+  if (link) {
+    return link.toString();
+  }
+};
+
+const extractHashtags = function (str, regex) {
+  let hashtags = str.match(hashtagRegex, "");
+  if (hashtags) {
+    hashtags.forEach((hashtag) => hashtag.trim());
+    return hashtags;
+  }
 };
 
 function findCountries(data) {
@@ -98,7 +121,23 @@ const getData = async (err, data, response) => {
   const tweetInfo = data.statuses;
 
   for (let i = 0; i < tweetInfo.length; i++) {
-    const cleanText = removeLink(tweetInfo[i].full_text);
+    const cleanText = removeLink(tweetInfo[i].full_text, hyperlinkRegex);
+    const hashtags = extractHashtags(cleanText, hashtagRegex);
+    const article_link = extractLink(tweetInfo[i].full_text, hyperlinkRegex);
+    const nouns = await wordpos.getNouns(cleanText);
+    const country_mentions = findCountries(cleanText);
+    const topics = [];
+    for (const n of nouns) {
+      if (
+        !country_mentions.includes(n) &&
+        !demonyms.includes(n) &&
+        !notTopics.includes(n)
+      ) {
+        topics.push(n);
+      }
+    }
+    const total_interactions =
+      tweetInfo[i].retweet_count + tweetInfo[i].favorite_count;
 
     const filter = { vendor_id: tweetInfo[i].id };
     const update = {
@@ -109,8 +148,11 @@ const getData = async (err, data, response) => {
       retweet_count: tweetInfo[i].retweet_count,
       favourite_count: tweetInfo[i].favorite_count,
       last_updated_at: Date.now(),
-      country_mentions: findCountries(cleanText),
-      topics: await wordpos.getNouns(cleanText),
+      country_mentions,
+      topics,
+      hashtags,
+      total_interactions,
+      article_link,
     };
     const opts = {
       new: true,

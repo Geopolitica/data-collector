@@ -1,6 +1,5 @@
-const stopWords = ["below", "their", "because", "of"];
-
-var words = [
+const words = [
+  "French",
   "a",
   "as",
   "able",
@@ -572,6 +571,10 @@ var words = [
   "youll",
   "z",
   "zero",
+  "UK",
+  "South",
+  "America",
+  "Africa",
 ];
 
 // tell the world about the noise words.
