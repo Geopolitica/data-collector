@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "client": "cd client && npm start",
-    "server": "node index.js"
+    "server": "src/node index.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

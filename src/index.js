@@ -14,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const router = express.Router();
 
-dotenv.config({ path: "./../config.env" });
+dotenv.config({ path: `${__dirname}/../config.env` });
 
 // Define Twitter handle of source here
 const source = "BBCWorld";
