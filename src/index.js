@@ -77,7 +77,7 @@ const Tweet = mongoose.model("Tweet", tweetSchema);
 
 const params = {
   q: `from:${source} -is:retweet lang:en`,
-  count: 1, // 10,
+  count: 10,
   tweet_mode: "extended",
 };
 // Define Regex
