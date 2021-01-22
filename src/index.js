@@ -5,8 +5,6 @@ const Twit = require("twit");
 const cron = require("node-cron");
 const path = require("path");
 const countryDetector = require("country-in-text-detector");
-const natural = require("natural");
-// const tokenizer = new natural.WordTokenizer();
 const notTopics = require("./stopwords.js").words;
 const demonyms = require("./demonyms.js").demonyms;
 var WordPOS = require("wordpos"),
@@ -16,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 const router = express.Router();
 
-dotenv.config({ path: "./config.env" });
+dotenv.config({ path: "./../config.env" });
 
 // Define Twitter handle of source here
 const source = "BBCWorld";
@@ -70,6 +68,7 @@ const tweetSchema = new mongoose.Schema({
   hashtags: Array,
   total_interactions: Number,
   article_link: String,
+  interactions_per_minute: Number,
 });
 
 const Tweet = mongoose.model("Tweet", tweetSchema);
@@ -78,7 +77,7 @@ const Tweet = mongoose.model("Tweet", tweetSchema);
 
 const params = {
   q: `from:${source} -is:retweet lang:en`,
-  count: 10,
+  count: 1, // 10,
   tweet_mode: "extended",
 };
 // Define Regex
@@ -117,6 +116,11 @@ function findCountries(data) {
   return countriesFound;
 }
 
+const calculateIPM = function (created_at, last_updated, total_interactions) {
+  const minutesPassed = Math.abs(created_at - last_updated) / 60000;
+  return total_interactions / minutesPassed;
+};
+
 const getData = async (err, data, response) => {
   const tweetInfo = data.statuses;
 
@@ -139,6 +143,12 @@ const getData = async (err, data, response) => {
     const total_interactions =
       tweetInfo[i].retweet_count + tweetInfo[i].favorite_count;
 
+    const interactions_per_minute = calculateIPM(
+      new Date(tweetInfo[i].created_at).getTime(),
+      Date.now(),
+      total_interactions
+    );
+
     const filter = { vendor_id: tweetInfo[i].id };
     const update = {
       vendor_id: tweetInfo[i].id,
@@ -153,6 +163,7 @@ const getData = async (err, data, response) => {
       hashtags,
       total_interactions,
       article_link,
+      interactions_per_minute,
     };
     const opts = {
       new: true,
