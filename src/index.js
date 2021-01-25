@@ -4,11 +4,20 @@ const dotenv = require("dotenv");
 const Twit = require("twit");
 const cron = require("node-cron");
 const path = require("path");
-const countryDetector = require("country-in-text-detector");
-const notTopics = require("./stopwords.js").words;
+// const countryDetector = require("country-in-text-detector");
+const stopwords = require("./stopwords.js").words;
 const demonyms = require("./demonyms.js").demonyms;
-var WordPOS = require("wordpos"),
+const WordPOS = require("wordpos"),
   wordpos = new WordPOS();
+const Tweet = require("./../models/tweetModel");
+
+const {
+  removeLink,
+  extractLink,
+  extractHashtags,
+  findCountries,
+  calculateIPM,
+} = require("./../utils/twitter.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -54,72 +63,16 @@ const T = new Twit({
   strictSSL: true, // optional - requires SSL certificates to be valid.
 });
 
-// Mongo Model definition
-const tweetSchema = new mongoose.Schema({
-  vendor_id: Number,
-  created_at: Date,
-  text: String,
-  user: String,
-  retweet_count: Number,
-  favourite_count: Number,
-  last_updated_at: Date,
-  country_mentions: Object,
-  topics: Array,
-  hashtags: Array,
-  total_interactions: Number,
-  article_link: String,
-  interactions_per_minute: Number,
-});
-
-const Tweet = mongoose.model("Tweet", tweetSchema);
-
 // Query setup
-
 const params = {
   q: `from:${source} -is:retweet lang:en`,
-  count: 10,
+  count: 1, //10,
   tweet_mode: "extended",
 };
-// Define Regex
 
+// Define Regex for twitter.js functions
 const hyperlinkRegex = /(?:https?|ftp):\/\/[\n\S]+/g;
 const hashtagRegex = /(^|\s)(#[a-z\d-]+)/gi;
-
-// Functions
-// TODO: Further refactor extraction functions
-const removeLink = function (str, regex) {
-  let cleanedString = str.replace(regex, "").trim();
-  return cleanedString;
-};
-
-const extractLink = function (str, regex) {
-  let link = str.match(regex, "");
-  if (link) {
-    return link.toString();
-  }
-};
-
-const extractHashtags = function (str, regex) {
-  let hashtags = str.match(hashtagRegex, "");
-  if (hashtags) {
-    hashtags.forEach((hashtag) => hashtag.trim());
-    return hashtags;
-  }
-};
-
-function findCountries(data) {
-  const countries = countryDetector.detect(data);
-  let countriesFound = [];
-  for (let i = 0; i < countries.length; i++) {
-    countriesFound.push(countries[i].name);
-  }
-  return countriesFound;
-}
-
-const calculateIPM = function (created_at, last_updated, total_interactions) {
-  const minutesPassed = Math.abs(created_at - last_updated) / 60000;
-  return total_interactions / minutesPassed;
-};
 
 const getData = async (err, data, response) => {
   const tweetInfo = data.statuses;
@@ -135,7 +88,7 @@ const getData = async (err, data, response) => {
       if (
         !country_mentions.includes(n) &&
         !demonyms.includes(n) &&
-        !notTopics.includes(n)
+        !stopwords.includes(n)
       ) {
         topics.push(n);
       }
@@ -177,12 +130,14 @@ const getData = async (err, data, response) => {
   }
 };
 
+const setFrequency = 30;
+
 // Inital Request
 T.get("search/tweets", params, getData);
-console.log("🔎 Checking for tweets every 15 minutes \n");
+console.log(`🔎 Checking for tweets every ${setFrequency} minutes \n`);
 
 // Subsequent requests
-cron.schedule("*/30 * * * *", function () {
+cron.schedule(`*/${setFrequency} * * * *`, function () {
   T.get("search/tweets", params, getData);
-  console.log("🔎 Checking for tweets every 15 minutes \n");
+  console.log(`🔎 Checking for tweets every ${setFrequency} minutes \n`);
 });
