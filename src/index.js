@@ -9,7 +9,7 @@ const stopwords = require("./stopwords.js").words;
 const demonyms = require("./demonyms.js").demonyms;
 const WordPOS = require("wordpos"),
   wordpos = new WordPOS();
-const Tweet = require(`./models/tweetModel.js`);
+const Tweet = require("./models/tweetModel.js");
 
 const {
   removeLink,
@@ -17,7 +17,7 @@ const {
   extractHashtags,
   findCountries,
   calculateIPM,
-} = require("./../utils/twitter.js");
+} = require("./utils/twitter.js");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -66,7 +66,7 @@ const T = new Twit({
 // Query setup
 const params = {
   q: `from:${source} -is:retweet lang:en`,
-  count: 1, //10,
+  count: 10, //10,
   tweet_mode: "extended",
 };
 

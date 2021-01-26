@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "client": "cd client && npm start",
-    "server": "src/node index.js"
+    "start": "node src/index.js",
+    "test": "mocha"
   },
   "dependencies": {
     "body-parser": "^1.18.3",
@@ -13,7 +14,6 @@
     "express": "^4.16.4",
     "got": "^11.8.0",
     "http-errors": "^1.8.0",
-    "mocha": "^8.2.1",
     "mongoose": "^5.11.6",
     "morgan": "^1.10.0",
     "natural": "^2.4.4",
@@ -26,7 +26,9 @@
     "wordpos": "^2.1.0"
   },
   "devDependencies": {
-    "concurrently": "^4.0.1"
+    "chai": "^4.2.0",
+    "concurrently": "^4.0.1",
+    "mocha": "^8.2.1"
   },
   "engines": {
     "node": "v14.15.3"
