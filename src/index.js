@@ -9,7 +9,7 @@ const stopwords = require("./stopwords.js").words;
 const demonyms = require("./demonyms.js").demonyms;
 const WordPOS = require("wordpos"),
   wordpos = new WordPOS();
-const Tweet = require(`${__dirname}/models/tweetModel`);
+const Tweet = require(`./models/tweetModel.js`);
 
 const {
   removeLink,
