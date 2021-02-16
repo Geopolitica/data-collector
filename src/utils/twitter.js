@@ -24,7 +24,7 @@ function findCountries(data) {
   const countries = countryDetector.detect(data);
   let countriesFound = [];
   for (let i = 0; i < countries.length; i++) {
-    countriesFound.push(countries[i].name);
+    countriesFound.push(countries[i]); //.name);
   }
   return countriesFound;
 }
