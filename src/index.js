@@ -5,8 +5,8 @@ const Twit = require("twit");
 const cron = require("node-cron");
 const path = require("path");
 // const countryDetector = require("country-in-text-detector");
-const stopwords = require("./stopwords.js").words;
-const demonyms = require("./demonyms.js").demonyms;
+const stopwords = require("./data/stopwords.js").words;
+const demonyms = require("./data/demonyms.js").demonyms;
 const WordPOS = require("wordpos"),
   wordpos = new WordPOS();
 const Tweet = require("./models/tweetModel.js");
@@ -130,7 +130,7 @@ const getData = async (err, data, response) => {
   }
 };
 
-const setFrequency = 30;
+const setFrequency = 15;
 
 // Inital Request
 T.get("search/tweets", params, getData);
