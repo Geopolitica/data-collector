@@ -1,24 +1,24 @@
 const countryDetector = require("./../country-in-text-detector");
 
-const removeLink = function (str, regex) {
+function removeLink(str, regex) {
   let cleanedString = str.replace(regex, "").trim();
   return cleanedString;
-};
+}
 
-const extractLink = function (str, regex) {
+function extractLink(str, regex) {
   let link = str.match(regex, "");
   if (link) {
     return link.toString();
   }
-};
+}
 
-const extractHashtags = function (str, regex) {
+function extractHashtags(str, regex) {
   let hashtags = str.match(regex, "");
   if (hashtags) {
     hashtags.forEach((hashtag) => hashtag.trim());
     return hashtags;
   }
-};
+}
 
 function findCountries(data) {
   const countries = countryDetector.detect(data);
