@@ -22,17 +22,23 @@ function extractHashtags(str, regex) {
 
 function findCountries(data) {
   const countries = countryDetector.detect(data);
-  let countriesFound = [];
+  let countriesFound = new Set(); // [];
   for (let i = 0; i < countries.length; i++) {
-    countriesFound.push(countries[i]); //.name);
+    if (countries[i]["iso3166"].startsWith("US-")) {
+      countriesFound.add("United States");
+    } else if (countries[i].type === "city") {
+      countriesFound.add(countries[i].countryName);
+    } else if (countries[i].type === "country") {
+      countriesFound.add(countries[i].name);
+    }
   }
-  return countriesFound;
+  return [...countriesFound];
 }
 
-const calculateIPM = function (created_at, last_updated, total_interactions) {
+function calculateIPM(created_at, last_updated, total_interactions) {
   const minutesPassed = Math.abs(created_at - last_updated) / 60000;
   return total_interactions / minutesPassed;
-};
+}
 
 module.exports = {
   removeLink,
