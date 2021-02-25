@@ -9,6 +9,7 @@ const tweetSchema = new mongoose.Schema({
   favourite_count: Number,
   last_updated_at: Date,
   country_mentions: Object,
+  country_codes: Object,
   topics: Array,
   hashtags: Array,
   total_interactions: Number,

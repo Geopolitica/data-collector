@@ -22,18 +22,31 @@ function extractHashtags(str, regex) {
 
 function findCountries(data) {
   const countries = countryDetector.detect(data);
-  let countriesFound = new Set(); // [];
+  let countryNames = new Set(); // [];
+  let countryCodes = new Set(); // [];
   for (let i = 0; i < countries.length; i++) {
-    if (countries[i]["iso3166"].startsWith("US-")) {
-      countriesFound.add("United States");
+    if (countries[i]["iso3166_alpha2"].startsWith("US-")) {
+      countryNames.add(countries[i].name);
+      countryCodes.add(countries[i].iso3166_alpha3);
     } else if (countries[i].type === "city") {
-      countriesFound.add(countries[i].countryName);
+      countryNames.add(countries[i].countryName); //.countryName);
+      countryCodes.add(countries[i].iso3166_alpha3);
     } else if (countries[i].type === "country") {
-      countriesFound.add(countries[i].name);
+      countryNames.add(countries[i].name); //.name);
+      countryCodes.add(countries[i].iso3166_alpha3);
     }
   }
-  return [...countriesFound];
+  const countryObj = {
+    countryNames: [...countryNames],
+    countryCodes: [...countryCodes],
+  };
+  return countryObj;
 }
+
+// const test = findCountries(
+//   "something something German something Australia Australia something New York Montreal"
+// );
+// console.log(test);
 
 function calculateIPM(created_at, last_updated, total_interactions) {
   const minutesPassed = Math.abs(created_at - last_updated) / 60000;

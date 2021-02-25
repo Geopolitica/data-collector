@@ -489,6 +489,7 @@ const words = [
   "unto",
   "up",
   "upon",
+  "US",
   "us",
   "use",
   "used",
