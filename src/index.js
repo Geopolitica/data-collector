@@ -10,7 +10,6 @@ const port = process.env.PORT || 5000;
 const router = express.Router();
 
 const getData = require("./getData");
-const testRequest = require("./testRequest");
 
 dotenv.config({ path: `${__dirname}/../config.env` });
 
@@ -55,7 +54,7 @@ const T = new Twit({
 // Query setup
 const params = {
   q: `from:${source} -is:retweet lang:en`,
-  count: 10, //10,
+  count: 10,
   tweet_mode: "extended",
 };
 

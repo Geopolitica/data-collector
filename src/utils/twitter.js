@@ -43,11 +43,6 @@ function findCountries(data) {
   return countryObj;
 }
 
-// const test = findCountries(
-//   "something something German something Australia Australia something New York Montreal"
-// );
-// console.log(test);
-
 function calculateIPM(created_at, last_updated, total_interactions) {
   const minutesPassed = Math.abs(created_at - last_updated) / 60000;
   return total_interactions / minutesPassed;
@@ -60,4 +55,3 @@ module.exports = {
   findCountries,
   calculateIPM,
 };
-// exports.removeLink = removeLink
